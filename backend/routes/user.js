@@ -41,7 +41,7 @@ router.post('/signup', async (req, res, next) => {
 
     await Account.create({
         userId: userId,
-        balance: 1 + Math.random() * 1000
+        balance: 1 + Math.random() * 10000
     })
 
     const token = jwt.sign({
@@ -112,24 +112,26 @@ router.put('/', authmiddleware, async (req, res) => {
     })
 })
 
-router.get('/bulk', async (req, res) => {
+router.get("/bulk", async (req, res) => {
     const filter = req.query.filter || "";
+
     const users = await User.find({
         $or: [{
             firstname: {
                 "$regex": filter
-            },
-            lastname: [{
+            }
+        }, {
+            lastname: {
                 "$regex": filter
-            }]
+            }
         }]
     })
 
     res.json({
         user: users.map(user => ({
             username: user.username,
-            firstName: user.firstname,
-            lastName: user.lastname,
+            firstname: user.firstname,
+            lastname: user.lastname,
             _id: user._id
         }))
     })
